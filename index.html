@@ -1,102 +1,288 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>我是智慧姐</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>我是智慧姐</title>
+  <meta name="description" content="智慧姐 — 卡通风格个人介绍，带交互特效示例" />
 
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
 
-    <style>
-        :root{
-            --bg:#FFF7F0;
-            --card:#FFFFFF;
-            --accent:#FF8DAA;
-            --accent-2:#6EC6FF;
-            --text:#3b3b3b;
-            --shadow: 0 6px 18px rgba(0,0,0,0.08);
-        }
-        html,body{height:100%;margin:0;font-family:'Baloo 2', "Helvetica Neue", Arial, sans-serif;background:linear-gradient(180deg,var(--bg) 0%, #FFF 100%);color:var(--text);}
-        .container{max-width:900px;margin:40px auto;padding:20px;}
-        .header{
-            display:flex;gap:20px;align-items:center;background:var(--card);padding:18px;border-radius:16px;box-shadow:var(--shadow);
-        }
-        .avatar{
-            width:120px;height:120px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 120px;border:6px solid rgba(255,255,255,0.6);
-        }
-        .avatar img{width:100%;height:100%;object-fit:cover;display:block;}
-        .title{flex:1}
-        .title h1{margin:0;font-size:28px;color:#222}
-        .title p{margin:6px 0 0;color:#666}
-        .badge{display:inline-block;padding:6px 10px;background:#FFF3F6;border-radius:12px;color:var(--accent);font-weight:700;margin-top:8px;}
-        .bio-card{margin-top:18px;padding:16px;background:linear-gradient(180deg,#fff,#fff9);border-radius:12px;box-shadow:var(--shadow);}
-        .grid{display:grid;grid-template-columns:1fr 300px;gap:18px;margin-top:18px;}
-        .gallery{display:flex;flex-wrap:wrap;gap:10px}
-        .thumb{width:96px;height:96px;border-radius:12px;overflow:hidden;border:4px solid #fff;background:#f6f6f6;box-shadow:0 6px 12px rgba(0,0,0,0.04)}
-        .thumb img{width:100%;height:100%;object-fit:cover}
-        footer{margin-top:24px;text-align:center;color:#888;font-size:14px}
-        .brush{position:fixed;right:18px;bottom:18px;width:90px;height:90px;background:conic-gradient(from 120deg,#FFD3B6,#FFB6C1,#C7E7FF);border-radius:50%;filter:drop-shadow(0 6px 16px rgba(0,0,0,0.12));display:flex;align-items:center;justify-content:center;font-weight:700;color:white;}
-        @media (max-width:800px){.grid{grid-template-columns:1fr}.avatar{width:96px;height:96px;flex:0 0 96px}}
-    </style>
+  <style>
+    :root{
+      --bg:#FFF7F0; --card:#FFFFFF; --accent:#FF8DAA; --accent-2:#6EC6FF;
+      --text:#3b3b3b; --shadow: 0 6px 18px rgba(0,0,0,0.08);
+      --spot-size:220px;
+    }
+    html,body{height:100%;margin:0;font-family:'Baloo 2', "Helvetica Neue", Arial, sans-serif;background:#111; color:var(--text);overflow-x:hidden}
+    /* 流动渐变背景 */
+    body::before{
+      content:"";position:fixed;inset:0;z-index:-3;
+      background:linear-gradient(120deg,#FFEFDB 0%, #FFF7F0 30%, #E6F7FF 60%, #FFF0F8 100%);
+      background-size:300% 300%;filter:contrast(1.03) saturate(1.05);
+      animation: gradientMove 14s ease infinite;
+      opacity:0.95;
+    }
+    @keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    .container{max-width:960px;margin:48px auto;padding:20px;position:relative;z-index:1}
+    .header{display:flex;gap:20px;align-items:center;background:var(--card);padding:18px;border-radius:16px;box-shadow:var(--shadow);}
+    .avatar{width:120px;height:120px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 120px;border:6px solid rgba(255,255,255,0.6)}
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    .title{flex:1}
+    .title h1{margin:0;font-size:28px;color:#222}
+    .title p{margin:6px 0 0;color:#666}
+    .badge{display:inline-block;padding:6px 10px;background:#FFF3F6;border-radius:12px;color:var(--accent);font-weight:700;margin-top:8px}
+
+    .bio-card{margin-top:18px;padding:16px;background:rgba(255,255,255,0.9);border-radius:12px;box-shadow:var(--shadow)}
+    .grid{display:grid;grid-template-columns:1fr 300px;gap:18px;margin-top:18px}
+    .gallery{display:flex;flex-wrap:wrap;gap:10px}
+    .thumb{width:96px;height:96px;border-radius:12px;overflow:hidden;border:4px solid #fff;background:#f6f6f6;box-shadow:0 6px 12px rgba(0,0,0,0.04)}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+    footer{margin-top:24px;text-align:center;color:#888;font-size:14px}
+
+    /* 按钮微交互（涟漪） */
+    .btn {display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;border:none;cursor:pointer;position:relative;overflow:hidden}
+    .ripple {position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,0.6);animation:ripple 700ms linear;}
+    @keyframes ripple{to{transform:scale(4);opacity:0}}
+
+    /* 光斑聚焦（spotlight）*/
+    .spotlight{position:fixed;pointer-events:none;left:0;top:0;width:var(--spot-size);height:var(--spot-size);border-radius:50%;
+      mix-blend-mode:screen;transform:translate(-50%,-50%);z-index:2;background:radial-gradient(circle at 40% 30%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.18) 25%, rgba(255,255,255,0.06) 55%, transparent 70%);filter:blur(10px);opacity:0.95}
+    /* 隐藏默认光标并使用自定义光标 */
+    body.hide-native-cursor{cursor:none}
+    .custom-cursor{position:fixed;z-index:3;pointer-events:none;width:12px;height:12px;border-radius:50%;background:linear-gradient(90deg,#fff,#ffd1e6);box-shadow:0 6px 12px rgba(0,0,0,0.15);transform:translate(-50%,-50%);mix-blend-mode:normal}
+    .custom-cursor--large{width:28px;height:28px;border:2px solid rgba(255,255,255,0.6);background:transparent}
+
+    /* canvas 粒子 (覆盖层) */
+    #cursor-canvas{position:fixed;left:0;top:0;width:100%;height:100%;z-index:2;pointer-events:none}
+
+    /* 磁性链接 */
+    .magnetic{display:inline-block;transition:transform 240ms cubic-bezier(.2,.9,.2,1)}
+    .magnetic:hover{transform:none}
+    .magnetic.charge{transform:translate(var(--mx,0px),var(--my,0px)) scale(1.05)}
+
+    /* 视差（简易） */
+    [data-parallax]{transition:transform 0.2s linear;will-change:transform}
+
+    @media (max-width:800px){
+      .grid{grid-template-columns:1fr}
+      .avatar{width:96px;height:96px;flex:0 0 96px}
+      .spotlight{display:none} /* 手机屏蔽光斑，节省性能 */
+      #cursor-canvas{display:none}
+      body.hide-native-cursor{cursor:auto}
+    }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header" role="banner" aria-label="智慧姐 介绍">
-            <div class="avatar" aria-hidden="false">
-                <img src="ph/3cb5d99d19a2a26e3052b2a93740bcf0.jpg" alt="智慧姐 头像">
-            </div>
-            <div class="title">
-                <h1>智慧姐</h1>
-                <p>卡通风格爱好者 · 喜欢蜡笔小新与多啦A梦的温暖世界</p>
-                <div class="badge">卡通·温暖·幽默</div>
-            </div>
-        </div>
 
-        <div class="bio-card" role="main">
-            <h2>关于智慧姐</h2>
-            <p>智慧姐喜欢用简单的卡通插画记录日常生活：亲情、友情与小趣事。下面是她的一些照片与形象照。</p>
+<body class="hide-native-cursor">
+  <!-- 交互开关 -->
+  <div style="position:fixed;right:12px;top:12px;z-index:6">
+    <label style="background:rgba(255,255,255,0.9);padding:8px;border-radius:10px;box-shadow:var(--shadow);font-size:13px;">
+      <input id="effectsToggle" type="checkbox" checked> 启用交互特效
+    </label>
+  </div>
 
-            <div class="grid">
-                <div>
-                    <h3>喜欢的角色</h3>
-                    <ul>
-                        <li>蜡笔小新（风格向）</li>
-                        <li>多啦A梦（温馨向）</li>
-                        <li>原创卡通形象与蜡笔风插画</li>
-                    </ul>
+  <canvas id="cursor-canvas"></canvas>
+  <div id="spot" class="spotlight"></div>
+  <div id="cursor" class="custom-cursor"></div>
 
-                    <h3>小故事</h3>
-                    <p>智慧姐的创作灵感来源于生活中的小细节与温暖瞬间，配色以蜡笔风为主，图像风格圆润可爱。</p>
-                </div>
-
-                <aside>
-                    <h3>照片集</h3>
-                    <div class="gallery" aria-label="智慧姐照片集">
-                        <div class="thumb"><img src="ph/3cb5d99d19a2a26e3052b2a93740bcf0.jpg" alt="智慧姐 照片 1"></div>
-                        <div class="thumb"><img src="ph/6444eea1dda35ca33b01221e559c9868.jpg" alt="智慧姐 照片 2"></div>
-                        <div class="thumb"><img src="ph/8d899759a52e8de6e0346c59f1074211.jpg" alt="智慧姐 照片 3"></div>
-                        <div class="thumb"><img src="ph/b5027cf337b90a62622e8534a2bf8881.jpg" alt="智慧姐 照片 4"></div>
-                    </div>
-                </aside>
-            </div>
-        </div>
-
-        <footer>
-            若要更换头像或照片，请替换 ph 文件夹内对应图片（文件名不必改动），或修改 img 的 src 指向新文件。
-        </footer>
+  <div class="container" data-parallax="0.02">
+    <div class="header" role="banner" aria-label="智慧姐 介绍">
+      <div class="avatar" aria-hidden="false">
+        <img src="ph/3cb5d99d19a2a26e3052b2a93740bcf0.jpg" alt="智慧姐 头像">
+      </div>
+      <div class="title">
+        <h1>智慧姐</h1>
+        <p>卡通风格爱好者 · 喜欢蜡笔小新与多啦A梦的温暖世界</p>
+        <div class="badge">卡通·温暖·幽默</div>
+      </div>
     </div>
 
-    <div class="brush" aria-hidden="true">卡通</div>
+    <div class="bio-card" role="main" data-parallax="0.04">
+      <h2>关于智慧姐</h2>
+      <p>智慧姐喜欢用简单的卡通插画记录日常生活：亲情、友情与小趣事。下面是她的一些照片与形象照。</p>
 
-    <!-- 说明：
-         图片已引用自项目中的 ph/ 文件夹：
-         - ph/3cb5d99d19a2a26e3052b2a93740bcf0.jpg
-         - ph/6444eea1dda35ca33b01221e559c9868.jpg
-         - ph/8d899759a52e8de6e0346c59f1074211.jpg
-         - ph/b5027cf337b90a62622e8534a2bf8881.jpg
+      <div class="grid">
+        <div>
+          <h3>喜欢的角色</h3>
+          <ul>
+            <li class="magnetic">蜡笔小新（风格向）</li>
+            <li class="magnetic">多啦A梦（温馨向）</li>
+            <li class="magnetic">原创卡通形象与蜡笔风插画</li>
+          </ul>
 
-         若要本地预览：在浏览器中打开 [17.html](17.html)。
-         注意版权：确认这些照片为你所有或有使用权限。
-    -->
+          <h3>小故事</h3>
+          <p>智慧姐的创作灵感来源于生活中的小细节与温暖瞬间，配色以蜡笔风为主，图像风格圆润可爱。</p>
+
+          <p><button class="btn magnetic" id="contactBtn">给智慧姐留言</button></p>
+        </div>
+
+        <aside>
+          <h3>照片集</h3>
+          <div class="gallery" aria-label="智慧姐照片集">
+            <div class="thumb"><img src="ph/3cb5d99d19a2a26e3052b2a93740bcf0.jpg" alt="智慧姐 照片 1"></div>
+            <div class="thumb"><img src="ph/6444eea1dda35ca33b01221e559c9868.jpg" alt="智慧姐 照片 2"></div>
+            <div class="thumb"><img src="ph/8d899759a52e8de6e0346c59f1074211.jpg" alt="智慧姐 照片 3"></div>
+            <div class="thumb"><img src="ph/b5027cf337b90a62622e8534a2bf8881.jpg" alt="智慧姐 照片 4"></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <footer>
+      若要更换头像或照片，请替换 ph 文件夹内对应图片，或修改 img 的 src 指向新文件。
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const canvas = document.getElementById('cursor-canvas');
+      const ctx = canvas.getContext && canvas.getContext('2d');
+      let W = canvas.width = innerWidth;
+      let H = canvas.height = innerHeight;
+      const cursor = document.getElementById('cursor');
+      const spot = document.getElementById('spot');
+      const toggle = document.getElementById('effectsToggle');
+      let enabled = toggle.checked;
+      const particles = [];
+      const maxParticles = 60;
+
+      function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+      addEventListener('resize', resize);
+
+      // 粒子类
+      function Particle(x,y,dx,dy,life,color){
+        this.x = x; this.y = y; this.dx = dx; this.dy = dy;
+        this.life = life; this.alpha = 1; this.color = color;
+      }
+      Particle.prototype.update = function(){
+        this.x += this.dx; this.y += this.dy; this.life -= 1;
+        this.alpha = Math.max(0, this.life/60);
+      };
+      Particle.prototype.draw = function(ctx){
+        ctx.beginPath(); ctx.fillStyle = `rgba(${this.color},${this.alpha})`;
+        ctx.arc(this.x,this.y, Math.max(1, 3*this.alpha), 0, Math.PI*2); ctx.fill();
+      };
+
+      // 鼠标处理
+      let mx = -1000, my = -1000;
+      addEventListener('pointermove', (e)=>{
+        if(!enabled) return;
+        mx = e.clientX; my = e.clientY;
+        // 自定义光标
+        cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+        // 光斑
+        spot.style.left = mx + 'px'; spot.style.top = my + 'px';
+        // 生成粒子
+        if(ctx){
+          for(let i=0;i<2;i++){
+            if(particles.length < maxParticles){
+              const angle = Math.random()*Math.PI*2;
+              const speed = Math.random()*1.6 + 0.4;
+              const dx = Math.cos(angle)*speed*0.15;
+              const dy = Math.sin(angle)*speed*0.15;
+              const color = '255,220,245'; // 柔粉色
+              particles.push(new Particle(mx, my, dx, dy, 60 + Math.random()*20, color));
+            }
+          }
+        }
+      });
+
+      // 磁性效果
+      const magnets = document.querySelectorAll('.magnetic');
+      function updateMagnets(e){
+        if(!enabled) return;
+        magnets.forEach(el=>{
+          const r = el.getBoundingClientRect();
+          const cx = r.left + r.width/2, cy = r.top + r.height/2;
+          const dx = (mx - cx), dy = (my - cy);
+          const dist = Math.hypot(dx,dy);
+          const strength = 120; // 影响半径
+          if(dist < strength){
+            const mxv = (dx / dist) * ( (strength - dist)/8 );
+            const myv = (dy / dist) * ( (strength - dist)/8 );
+            el.style.setProperty('--mx', mxv.toFixed(2) + 'px');
+            el.style.setProperty('--my', myv.toFixed(2) + 'px');
+            el.classList.add('charge');
+          } else {
+            el.style.setProperty('--mx', '0px');
+            el.style.setProperty('--my', '0px');
+            el.classList.remove('charge');
+          }
+        });
+      }
+
+      // 涟漪效果
+      document.addEventListener('click', (e)=>{
+        if(!enabled) return;
+        const btn = e.target.closest('.btn');
+        if(!btn) return;
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const span = document.createElement('span');
+        span.className = 'ripple';
+        span.style.left = x + 'px'; span.style.top = y + 'px';
+        span.style.width = span.style.height = Math.max(rect.width, rect.height) + 'px';
+        btn.appendChild(span);
+        setTimeout(()=> span.remove(), 700);
+      });
+
+      // 简易视差（基于 scroll）
+      const paras = document.querySelectorAll('[data-parallax]');
+      function updateParallax(){
+        const s = pageYOffset || document.documentElement.scrollTop;
+        paras.forEach(el=>{
+          const rate = parseFloat(el.getAttribute('data-parallax') || 0);
+          el.style.transform = `translateY(${s * rate}px)`;
+        });
+      }
+      addEventListener('scroll', ()=>{ if(enabled) requestAnimationFrame(updateParallax); });
+
+      // 动画帧渲染
+      function animate(){
+        if(!ctx || !enabled){ if(ctx) ctx.clearRect(0,0,W,H); requestAnimationFrame(animate); return; }
+        ctx.clearRect(0,0,W,H);
+        // 更新 & 绘制粒子
+        for(let i=particles.length-1;i>=0;i--){
+          const p = particles[i];
+          p.update();
+          p.draw(ctx);
+          if(p.life <= 0) particles.splice(i,1);
+        }
+        // 磁性
+        updateMagnets();
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      // 开关
+      toggle.addEventListener('change', ()=>{
+        enabled = toggle.checked;
+        document.body.classList.toggle('hide-native-cursor', enabled);
+        if(!enabled){
+          // 清理状态
+          cursor.style.display = 'none'; spot.style.display = 'none';
+          if(ctx) ctx.clearRect(0,0,W,H);
+        } else {
+          cursor.style.display = ''; spot.style.display = '';
+        }
+      });
+
+      // 初始显示/隐藏
+      if(!enabled){ cursor.style.display='none'; spot.style.display='none'; }
+
+      // 可选：键盘 ESC 关闭特效
+      addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ toggle.checked=false; toggle.dispatchEvent(new Event('change')); }} );
+
+      // 让按钮拥有 role 与可访问提示
+      const contactBtn = document.getElementById('contactBtn');
+      contactBtn.addEventListener('click', ()=> alert('谢谢！（示例留言按钮）'));
+
+      // 触摸设备调整：若检测到触摸，关掉 canvas & 光标
+      addEventListener('touchstart', ()=>{ toggle.checked=false; toggle.dispatchEvent(new Event('change')); }, {passive:true});
+    })();
+  </script>
 </body>
 </html>
